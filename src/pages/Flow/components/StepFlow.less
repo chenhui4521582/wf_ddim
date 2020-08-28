@@ -1,0 +1,115 @@
+.stepsItem{
+  overflow: hidden;
+  height: 100px;
+  vertical-align: top;
+  flex: 1 1;
+  position: relative;
+  width: fit-content; margin-left: auto; margin-right: auto;
+  .stepTail {
+    position: absolute;
+    left: 140px;
+    top: -17px;
+    height: 100%;
+    width: 1px;
+    padding: 30px 0 4px 0;
+    &:after {
+      content: '';
+      display: inline-block;
+      height: 100%;
+      width: 1px;
+      border-radius: 1px;
+      position: relative;
+      left: 5px;
+      top: 36px;
+    }
+  }
+  .img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    float: left;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: center;
+    line-height: 50px;
+  }
+  .stepLeft {
+    float: left;
+    height: 100px;
+    margin-top: 13px;
+    width: 100px;
+    font-size: 13px;
+    text-align: right;
+  }
+  .stepRight {
+    float: left;
+    height: 100px;
+    margin-top: 13px;
+    width: 100px;
+    font-size: 13px;
+  }
+}
+
+.stepWait {
+  color: #666666;
+  .stepTail {
+    // color: #666666;
+    &:after {
+      background-color: #666666;
+    }
+  }
+  .img {
+    color: #666666;
+    background-color: #ccc;
+  }
+}
+
+.stepProcessing {
+  color: #338CDF;
+  .stepTail {
+    // color: #fff;
+    &:after {
+      background-color: #338CDF;
+    }
+  }
+  .img {
+    color: #fff;
+    background-color: #338CDF;
+  }
+}
+
+.stepError {
+  color: #e94f4f;
+  .stepTail {
+    // color: #fff;
+    &:after {
+      background-color: #e94f4f;
+    }
+  }
+  .img {
+    color: #fff;
+    background-color: #e94f4f;
+  }
+}
+
+.stepCancel {
+  color: #ffc600;
+  .stepTail {
+    // color: #fff;
+    &:after {
+      background-color: #ffc600;
+    }
+  }
+  .img {
+    color: #fff;
+    background-color: #ffc600;
+  }
+}
+
+.stepFinish {
+  .stepTail {
+    &:after {
+      display: none;
+    }
+  }
+}

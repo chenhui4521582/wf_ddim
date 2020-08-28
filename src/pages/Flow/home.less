@@ -1,0 +1,86 @@
+.homeBar {
+  position: fixed; 
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  background-color: #fff;
+}
+
+@supports (bottom: env(safe-area-inset-bottom)) {
+  .homeBar {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+.initialPic {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/initia0.png) center center /  21px 21px no-repeat;
+}
+
+.initialPicSelected {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/initia1.png) center center /  21px 21px no-repeat;
+}
+
+.myPic {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/my0.png) center center /  21px 21px no-repeat;
+}
+
+.myPicSelected {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/my1.png) center center /  21px 21px no-repeat;
+}
+
+.dealing {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/dealing0.png) center center /  21px 21px no-repeat;
+}
+
+.dealingSelected {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/dealing1.png) center center /  21px 21px no-repeat;
+}
+
+.dealed {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/dealed0.png) center center /  21px 21px no-repeat;
+}
+
+.dealedSelected {
+  width: 22px;
+  height: 22px;
+  background: url(~@/assets/dealed1.png) center center /  21px 21px no-repeat;
+}
+
+.navbarX {
+  background: #338CDF;
+  color: #fff;
+  height: calc(50px + env(safe-area-inset-top));
+  height: calc(50px + constant(safe-area-inset-top));
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  // padding-top: env(safe-area-inset-top);
+  // padding-top: constant(safe-area-inset-top);
+}
+
+@supports (top: env(safe-area-inset-top)) {
+  .navbarX {
+    height: calc(50px + env(safe-area-inset-top));
+    height: calc(50px + constant(safe-area-inset-top));
+    // padding-top: env(safe-area-inset-top);
+    // padding-top: constant(safe-area-inset-top);
+  }
+}
