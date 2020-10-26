@@ -131,9 +131,10 @@ export const FormContent = (props: any, ref: any) => {
             <List.Item extra={
               <Upload
                 action="/api/transmit/upload/saveFile"
-                onChange={newProps.onChange}
-                disabled={newProps.disabled}
-                fileList={newProps.value}
+                // onChange={newProps.onChange}
+                // disabled={newProps.disabled}
+                // fileList={[]}
+                {...newProps}
               >
                 <Button>
                   上传
