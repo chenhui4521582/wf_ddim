@@ -16,6 +16,11 @@ export interface IFormDetail {
     controlList: IFormList[];
     id: number;
     name: string;
+    type: 0 | 1 | 2;
+    canRemove: boolean;
+    canAdd: boolean;
+    multipleNumber: number;
+    sort: number;
   }[];
   name: string;
   id: number;

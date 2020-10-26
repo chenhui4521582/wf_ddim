@@ -1,7 +1,7 @@
 import { GlobalResParams } from '@/utils/global';
 import { useState, useEffect } from 'react';
 import {
-  queryOrganization, queryDepartment, queryLabor, queryTitle, queryJob, queryRank, queryCompany, queryCost, queryMRank
+  queryOrganization, queryDepartment, queryLabor, queryTitle, queryJob, queryRank, queryCompany, queryCost, queryMRank, queryWKTask
 } from '@/services/global';
 
 export interface IOrganization {
@@ -16,7 +16,7 @@ export const useOrganization = () => {
   const [ogs, setOgs] = useState<IOrganization[]>([]);
   const getOrganization = async () => {
     let res: GlobalResParams<IOrganization[]> = await queryOrganization();
-    setOgs(res.obj);
+    setOgs(res?.obj);
   }
   useEffect(() => {
     getOrganization();
@@ -33,7 +33,7 @@ export const useDepartment = (level: number) => {
   const [dps, setDps] = useState<IDepartment[]>([]);
   const getDepartment = async () => {
     let res: GlobalResParams<IDepartment[]> = await queryDepartment(level);
-    setDps(res.obj);
+    setDps(res?.obj);
   }
   useEffect(() => {
     getDepartment();
@@ -50,7 +50,7 @@ export const useLabor = () => {
   const [labors, setLabors] = useState<ILabor[]>([]);
   const getLabor = async () => {
     let res: GlobalResParams<ILabor[]> = await queryLabor();
-    setLabors(res.obj);
+    setLabors(res?.obj);
   }
   useEffect(() => {
     getLabor();
@@ -67,7 +67,7 @@ export const useTitle = () => {
   const [titles, setTitles] = useState<ITitle[]>([]);
   const getTitle = async () => {
     let res: GlobalResParams<ITitle[]> = await queryTitle();
-    setTitles(res.obj);
+    setTitles(res?.obj);
   }
   useEffect(() => {
     getTitle();
@@ -84,7 +84,7 @@ export const useJob = () => {
   const [jobs, setJobs] = useState<IJob[]>([]);
   const getJob = async () => {
     let res: GlobalResParams<IJob[]> = await queryJob();
-    setJobs(res.obj);
+    setJobs(res?.obj);
   }
   useEffect(() => {
     getJob();
@@ -101,7 +101,7 @@ export const useRank = () => {
   const [ranks, setRanks] = useState<IRank[]>([]);
   const getRank = async () => {
     let res: GlobalResParams<IRank[]> = await queryRank();
-    setRanks(res.obj);
+    setRanks(res?.obj);
   }
   useEffect(() => {
     getRank();
@@ -118,7 +118,7 @@ export const useMRank = () => {
   const [mranks, setMRanks] = useState<IMRank[]>([]);
   const getMRank = async () => {
     let res: GlobalResParams<IMRank[]> = await queryMRank();
-    setMRanks(res.obj);
+    setMRanks(res?.obj);
   }
   useEffect(() => {
     getMRank();
@@ -135,7 +135,7 @@ export const useCompany = () => {
   const [companys, setCompanys] = useState<ICompany[]>([]);
   const getCompany = async () => {
     let res: GlobalResParams<ICompany[]> = await queryCompany();
-    setCompanys(res.obj);
+    setCompanys(res?.obj);
   }
   useEffect(() => {
     getCompany();
@@ -152,12 +152,33 @@ export const useCost = () => {
   const [costs, setCosts] = useState<ICost[]>([]);
   const getCost = async () => {
     let res: GlobalResParams<ICost[]> = await queryCost();
-    setCosts(res.obj);
+    setCosts(res?.obj);
   }
   useEffect(() => {
     getCost();
   }, [])
   return { costs };
+}
+
+export interface IWKTask {
+  title: string;
+  id: number;
+}
+
+export interface IWKRes {
+  list: IWKTask[]
+}
+
+export const useWKTask = () => {
+  const [tasks, setTasks] = useState<IWKTask[]>([]);
+  const getTasks = async () => {
+    let res: GlobalResParams<IWKRes> = await queryWKTask();
+    setTasks(res?.obj?.list);
+  }
+  useEffect(() => {
+    getTasks();
+  }, [])
+  return { tasks };
 }
 
 

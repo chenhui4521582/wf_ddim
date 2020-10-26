@@ -4,22 +4,17 @@ import { GlobalResParams } from '@/utils/global';
 import { useModel, history } from 'umi';
 import { WingBlank, SegmentedControl, WhiteSpace, Card, List, Button, Toast } from 'antd-mobile';
 import { FormBase } from './components/form_base';
+import { createForm } from 'rc-form';
 import shu from '@/assets/shu.png';
 import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toFormData } from './components/form_function';
-import { Form } from 'antd';
 
-
-const validateMessages = {
-  required: "'${name}' 是必填字段",
-};
-
-export default (props: any) => {
-  const [form] = Form.useForm();
+const DetailContent = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [detail, setDetail] = useState<IFormDetail>();
   const { setBarName } = useModel('useBarName');
   const id = Number(props.match.params.id);
+  const { getFieldError, getFieldDecorator, setFieldsValue } = props.form;
   const [selected, setSelected] = useState(0);
   const [resApprovalId, setResApprovalId] = useState(-1);
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
@@ -61,6 +56,7 @@ export default (props: any) => {
     newList.canRemove = true;
     newList.canAdd = true;
     newList.sort = newList.sort + 10000;
+    newList.multipleNumber = newList.multipleNumber + 1;
     let data;
     detail && (data = {
       ...detail,
@@ -90,40 +86,28 @@ export default (props: any) => {
     setDetail(data as any);
   }
 
-  const countInArray = (array: number[], what: number) => {
-    return array.filter(item => item == what).length;
-  }
-
-  const handleSubmit = async (values: any) => {
-    setLoading(true);
-    let formData: any[] = [];
-    Object.keys(values).map(item => {
-      let formDataItem = toFormData(item, values[item], 'id');
-      formData.push(formDataItem);
-    });
-    let idArray: number[] = [];
-    formData.map(item => {
-      let count = countInArray(idArray, item.id);
-      if (count > 0) {
-        item.multipleNumber = item.multipleNumber + count;
+  const handleSubmit = () => {
+    debugger
+    props.form.validateFields(async (error: any, values: any) => {
+      if (!error) {
+        setLoading(true);
+        let formData: any[] = [];
+        Object.keys(values).map(item => {
+          let formDataItem = toFormData(item, values[item], 'id');
+          formData.push(formDataItem);
+        });
+        let res: GlobalResParams<string> = await saveFlow({
+          resFormId: id,
+          wfResFormSaveItemCrudParamList: formData,
+          wfTaskFormFilesCrudParamList: []
+        });
+        setLoading(false);
+        if (res.status === 200) {
+          history.goBack();
+          Toast.success(res.msg, 2);
+        }
       }
-      idArray.push(item.id);
-    })
-    let res: GlobalResParams<string> = await saveFlow({
-      resFormId: id,
-      wfResFormSaveItemCrudParamList: formData,
-      wfTaskFormFilesCrudParamList: []
     });
-    setLoading(false);
-    if (res.status === 200) {
-      history.goBack();
-      Toast.success(res.msg, 2);
-    }
-  }
-
-  const handleError = ({errorFields}: any) => {
-    let messages = errorFields[0].errors[0].split("'")[1].split('-$-')[5] + errorFields[0].errors[0].split("'")[2];
-    Toast.fail(messages, 2);
   }
 
   return (
@@ -139,7 +123,7 @@ export default (props: any) => {
         <WhiteSpace size="lg" />
         {
           selected === 0 ?
-          <Form form={form} onFinish={handleSubmit} onFinishFailed={handleError} validateMessages={validateMessages}>
+          <div>
             {
               detail?.formChildlist?.map(item => {
                 return (
@@ -158,34 +142,21 @@ export default (props: any) => {
                           {
                             item?.controlList.map(formList => {
                               let formId: string | number = formList.id;
-                              formId = `${formId}-$-${formList.baseControlType}-$-${formList.defaultValue}-$-${formList.defaultShowValue}-$-${item.sort}-$-${formList.name}`;
+                              formId = `${formId}-$-${formList.baseControlType}-$-${formList.defaultValue}-$-${formList.defaultShowValue}-$-${item.multipleNumber}`;
                               formList.formnameid = formId;
                               return (
                                 <div key={formList.id + '-' + item.sort}>
-                                  <Form.Item
-                                    noStyle
-                                    name={`${formId}`}
-                                    initialValue={formList.defaultShowValue || formList.defaultValue}
-                                    rules={[{required: formList.isRequired === 1}]}
-                                  >
-                                    <FormBase data={formList} setFieldsValue={form.setFieldsValue}></FormBase>
-                                  </Form.Item>
-                                  {/* <div style={{color: 'red'}}>
-                                    {(form.getFieldError(`${formId}`) && `${formList.name}必填`)}
-                                  </div> */}
+                                  {
+                                    getFieldDecorator(`${formId}`, {
+                                      rules: [{required: formList.isRequired === 1}],
+                                      initialValue: formList.defaultShowValue || formList.defaultValue,
+                                    })
+                                    (<FormBase data={formList} setFieldsValue={setFieldsValue}></FormBase>)
+                                  }
+                                  <div style={{color: 'red'}}>
+                                    {(getFieldError(`${formId}`) && `${formList.name}必填`)}
+                                  </div>
                                 </div>
-                                // <div key={formList.id + '-' + item.sort}>
-                                //   {
-                                //     getFieldDecorator(`${formId}`, {
-                                //       rules: [{required: formList.isRequired === 1}],
-                                //       initialValue: formList.defaultShowValue || formList.defaultValue,
-                                //     })
-                                //     (<FormBase data={formList} setFieldsValue={setFieldsValue}></FormBase>)
-                                //   }
-                                //   <div style={{color: 'red'}}>
-                                //     {(getFieldError(`${formId}`) && `${formList.name}必填`)}
-                                //   </div>
-                                // </div>
                               )
                             })
                           }
@@ -201,10 +172,10 @@ export default (props: any) => {
                 )
               })
             }
-            <Button type="primary" style={{touchAction: 'none'}} disabled={loading} loading={loading} onClick={_ => form.submit()}>提交</Button>
+            <Button type="primary" style={{touchAction: 'none'}} disabled={loading} loading={loading} onClick={handleSubmit}>提交</Button>
             <WhiteSpace size="lg" />
             <WhiteSpace size="lg" />
-          </Form>
+          </div>
           :
           <StepFlow data={flowSteps} type="initial" />
         }
@@ -212,3 +183,5 @@ export default (props: any) => {
     </div>
   )
 }
+
+export default createForm()(DetailContent);

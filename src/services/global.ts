@@ -78,3 +78,14 @@ export async function queryCost() {
     method: 'POST'
   });
 }
+
+// 关联流程
+export async function queryWKTask() {
+  return request(`/api/talentIm/wftaskform/listRelationFormPage`, {
+    method: 'POST',
+    data: {
+      pageNum: 1,
+      pageSize: 20
+    }
+  });
+}

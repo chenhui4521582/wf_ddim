@@ -20,6 +20,10 @@ export interface IFormDetail {
     controlList: IFormList[];
     id: number;
     name: string;
+    type: number;
+    canAdd: boolean;
+    multipleNumber: number;
+    sort: number;
   }[];
   name: string;
   id: number;

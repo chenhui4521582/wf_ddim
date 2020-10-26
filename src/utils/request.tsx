@@ -62,7 +62,7 @@ const getIMToken = async () => {
 
 request.use(async (ctx, next) => {
   // let dataToken = await getIMToken();
-  let dataToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTc5OTYzNjEyMTMsInBheWxvYWQiOiJcIjNmMTVjODBiYjUxNjQwNmRiNjBhODg3MDAzZWE3MTE1XCIifQ.JYkMjvuPEyKvgis_W1uat2ZZUbO9a9G4JUlgcObI700'
+  let dataToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDMzNTI0NTAxMTAsInBheWxvYWQiOiJcIjY1YzVlZjNjYzExNzQzNmE4ZDFlODdiYzc2NTliY2ZkXCIifQ.fHYKTW8R4hoQRNk2Euwvlt8lCzcRI9Jevk4jtCOgSnE'
   const { req } = ctx;
   const { options } = req;
   options.headers = {

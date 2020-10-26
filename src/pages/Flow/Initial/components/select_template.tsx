@@ -1,7 +1,7 @@
 import React from 'react';
 import { Picker, List } from 'antd-mobile';
 import {
-  useOrganization, useDepartment, useLabor, useTitle, useJob, useRank, useCompany, useCost, useMRank
+  useOrganization, useDepartment, useLabor, useTitle, useJob, useRank, useCompany, useCost, useMRank, useWKTask
 } from '@/models/global';
 import styles from './selectTemplate.less';
 
@@ -74,6 +74,10 @@ export default (props: ISelectParams) => {
   } else if (type === 'cost') {
     const { costs } = useCost();
     dataSource = loopCost(costs);
+    cols= 1;
+  } else if (type === 'wkTask') {
+    const { tasks } = useWKTask();
+    dataSource = loopTask(tasks);
     cols= 1;
   }
 
@@ -166,6 +170,16 @@ const loopCost = (data: any[]) => {
     const result: IPickerData = {
       value: item.id + '---' + item.costCenterName,
       label: item.costCenterName
+    };
+    return result;
+  })
+}
+
+const loopTask = (data: any[]) => {
+  return data?.map((item: any) => {
+    const result: IPickerData = {
+      value: item.id + '---' + item.title,
+      label: item.title
     };
     return result;
   })

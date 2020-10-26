@@ -13,15 +13,28 @@ export const FormContent = (props: any, ref: any) => {
     case 'text':
     case 'formNumber':
     case 'currJobNumber':
-    case 'title':
+    // case 'title':
       return <InputItem {...newProps} style={{textAlign: 'right'}}>
         {name}
         {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
       </InputItem>;
-    
+
+    case 'title':
+      return (
+        <TextareaItem
+          title={<div>
+            {name}
+            {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
+          </div>}
+          {...newProps}
+          rows={2}
+        ></TextareaItem>
+      )
+
     // 多行文本
     case 'areatext':
     case 'remark':
+    case 'title':
       return (
         <TextareaItem
           title={<div>
@@ -82,6 +95,7 @@ export const FormContent = (props: any, ref: any) => {
     case 'labor':
     case 'group':
     case 'positionMLevel':
+    case 'wkTask':
       return <SelectTemplate newProps={newProps} data={data} type={baseControlType}></SelectTemplate>;
 
     // case 'user':    

@@ -52,6 +52,7 @@ export const toShow = (data: any) => {
     case 'cost':
     case 'labor':
     case 'positionMLevel':
+    case 'wkTask':
       return [data.value + '---' + data.showValue]
 
     case 'user':
@@ -83,6 +84,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
   let baseControlType = dataKey.split('-$-')[1];
   let defaultValue = dataKey.split('-$-')[2];
   let defaultShowValue = dataKey.split('-$-')[3];
+  let multipleNumber = 1;
   if (dataValue) {
     switch (baseControlType) {
       case 'text':
@@ -97,14 +99,14 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'currJobNumber':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: dataValue.replace(".", ""),
         }
   
       case 'multiple':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: dataValue,
           showValue: dataValue
         }
@@ -118,13 +120,13 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
           });
           return {
             [idName]: id,
-            multipleNumber: 1,
+            multipleNumber,
             value: filesUrl.length > 0 ? filesUrl.join(',') : '',
             showValue: ''
           }
         } else return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: '',
           showValue: ''
         }
@@ -132,7 +134,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'date':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: (moment(dataValue).format('YYYY-MM-DD')),
           showValue: (moment(dataValue).format('YYYY-MM-DD'))
         }
@@ -140,7 +142,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'datetime':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: (moment(dataValue).format('YYYY-MM-DD HH:mm')),
           showValue: (moment(dataValue).format('YYYY-MM-DD HH:mm'))
         }
@@ -148,7 +150,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'select':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: dataValue[0],
           showValue: dataValue[0]
         }
@@ -161,9 +163,10 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'cost':
       case 'labor':
       case 'positionMLevel':
+      case 'wkTask':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: dataValue[0].split('---')[0],
           showValue: dataValue[0].split('---')[1]
         }
@@ -177,7 +180,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
         }
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: newUserValue[newUserValue.length-1],
           showValue: newUserShowValue[newUserShowValue.length-1]
         }
@@ -192,7 +195,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
         }
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: newValue.join(','),
           showValue: newShowValue.join(',')
         }
@@ -205,7 +208,7 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'currGroup':
         return {
           [idName]: id,
-          multipleNumber: 1,
+          multipleNumber,
           value: defaultValue,
           showValue: defaultShowValue
         }
@@ -214,14 +217,14 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
     if (baseControlType === 'user') {
       return {
         [idName]: id,
-        multipleNumber: 1,
+        multipleNumber,
         value: defaultValue,
         showValue: defaultShowValue
       }
     } else {
       return {
         [idName]: id,
-        multipleNumber: 1,
+        multipleNumber,
         value: '',
         showValue: ''
       }
