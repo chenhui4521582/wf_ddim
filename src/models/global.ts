@@ -1,7 +1,18 @@
 import { GlobalResParams } from '@/utils/global';
 import { useState, useEffect } from 'react';
 import {
-  queryOrganization, queryDepartment, queryLabor, queryTitle, queryJob, queryRank, queryCompany, queryCost, queryMRank, queryWKTask
+  queryOrganization,
+  queryDepartment,
+  queryLabor,
+  queryTitle,
+  queryJob,
+  queryRank,
+  queryCompany,
+  queryCost,
+  queryMRank,
+  queryWKTask,
+  queryVacationType,
+  querySignType,
 } from '@/services/global';
 
 export interface IOrganization {
@@ -17,12 +28,12 @@ export const useOrganization = () => {
   const getOrganization = async () => {
     let res: GlobalResParams<IOrganization[]> = await queryOrganization();
     setOgs(res?.obj);
-  }
+  };
   useEffect(() => {
     getOrganization();
-  }, [])
+  }, []);
   return { ogs };
-}
+};
 
 export interface IDepartment {
   name: string;
@@ -34,12 +45,12 @@ export const useDepartment = (level: number) => {
   const getDepartment = async () => {
     let res: GlobalResParams<IDepartment[]> = await queryDepartment(level);
     setDps(res?.obj);
-  }
+  };
   useEffect(() => {
     getDepartment();
-  }, [])
+  }, []);
   return { dps };
-}
+};
 
 export interface ILabor {
   id: number;
@@ -51,12 +62,12 @@ export const useLabor = () => {
   const getLabor = async () => {
     let res: GlobalResParams<ILabor[]> = await queryLabor();
     setLabors(res?.obj);
-  }
+  };
   useEffect(() => {
     getLabor();
-  }, [])
+  }, []);
   return { labors };
-}
+};
 
 export interface ITitle {
   titleId: string;
@@ -68,12 +79,12 @@ export const useTitle = () => {
   const getTitle = async () => {
     let res: GlobalResParams<ITitle[]> = await queryTitle();
     setTitles(res?.obj);
-  }
+  };
   useEffect(() => {
     getTitle();
-  }, [])
+  }, []);
   return { titles };
-}
+};
 
 export interface IJob {
   jobId: string;
@@ -85,12 +96,12 @@ export const useJob = () => {
   const getJob = async () => {
     let res: GlobalResParams<IJob[]> = await queryJob();
     setJobs(res?.obj);
-  }
+  };
   useEffect(() => {
     getJob();
-  }, [])
+  }, []);
   return { jobs };
-}
+};
 
 export interface IRank {
   rankName: string;
@@ -102,12 +113,12 @@ export const useRank = () => {
   const getRank = async () => {
     let res: GlobalResParams<IRank[]> = await queryRank();
     setRanks(res?.obj);
-  }
+  };
   useEffect(() => {
     getRank();
-  }, [])
+  }, []);
   return { ranks };
-}
+};
 
 export interface IMRank {
   rankName: string;
@@ -119,12 +130,12 @@ export const useMRank = () => {
   const getMRank = async () => {
     let res: GlobalResParams<IMRank[]> = await queryMRank();
     setMRanks(res?.obj);
-  }
+  };
   useEffect(() => {
     getMRank();
-  }, [])
+  }, []);
   return { mranks };
-}
+};
 
 export interface ICompany {
   companyName: string;
@@ -136,12 +147,12 @@ export const useCompany = () => {
   const getCompany = async () => {
     let res: GlobalResParams<ICompany[]> = await queryCompany();
     setCompanys(res?.obj);
-  }
+  };
   useEffect(() => {
     getCompany();
-  }, [])
+  }, []);
   return { companys };
-}
+};
 
 export interface ICost {
   costCenterName: string;
@@ -153,12 +164,12 @@ export const useCost = () => {
   const getCost = async () => {
     let res: GlobalResParams<ICost[]> = await queryCost();
     setCosts(res?.obj);
-  }
+  };
   useEffect(() => {
     getCost();
-  }, [])
+  }, []);
   return { costs };
-}
+};
 
 export interface IWKTask {
   title: string;
@@ -166,7 +177,7 @@ export interface IWKTask {
 }
 
 export interface IWKRes {
-  list: IWKTask[]
+  list: IWKTask[];
 }
 
 export const useWKTask = () => {
@@ -174,11 +185,49 @@ export const useWKTask = () => {
   const getTasks = async () => {
     let res: GlobalResParams<IWKRes> = await queryWKTask();
     setTasks(res?.obj?.list);
-  }
+  };
   useEffect(() => {
     getTasks();
-  }, [])
+  }, []);
   return { tasks };
+};
+
+export interface List {
+  type: Number;
+  typeId: String;
+  name: String;
 }
 
+export const useVacationType = () => {
+  const [list, setList] = useState<List[]>([]);
+  async function _getVacationType() {
+    let res: GlobalResParams<List[]> = await queryVacationType();
+    if (res?.status === 200) {
+      setList(res.obj);
+    }
+  }
+  useEffect(() => {
+    _getVacationType();
+  }, []);
+  return { list };
+};
 
+export interface signType {
+  desc: String;
+  code: Number;
+}
+
+export const useAddSignType = () => {
+  const [signType, setSignType] = useState<signType[]>([]);
+  async function _getSignType() {
+    let res: GlobalResParams<signType> = await querySignType();
+    console.log(res);
+    if (res?.status === 200) {
+      setSignType(res.obj);
+    }
+  }
+  useEffect(() => {
+    _getSignType();
+  }, []);
+  return { signType };
+};

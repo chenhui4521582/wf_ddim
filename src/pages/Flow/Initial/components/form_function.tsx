@@ -13,8 +13,13 @@ export const toShow = (data: any) => {
     case 'currDatetime':
     case 'title':
     case 'multiple':
-      return data.value
-
+    case 'totalVacationTime':
+    case 'totalReVacationTime':
+    case 'overTimeTotal':
+    case 'remainCardNumber':
+    case 'outcheckTime':
+    case 'vacationTime':
+      return data.value;
     case 'files':
       const { value } = data;
       let newFileList: any[] = [];
@@ -26,23 +31,26 @@ export const toShow = (data: any) => {
             status: 'done',
             response: {
               obj: {
-                url: item
-              }
+                url: item,
+              },
             },
-            url: item
-          })
-        })
+            url: item,
+          });
+        });
         // debugger
         return newFileList;
       } else return null;
-
     case 'date':
     case 'datetime':
-      return new Date(data.value)
-      
-
+    case 'vacationStartTime':
+    case 'vacationEndTime':
+    case 'overTimeStart':
+    case 'overTimeEnd':
+    case 'outCheckStartTime':
+    case 'outCheckEndTime':
+      return new Date(data.value);
     case 'select':
-      return [data.value]
+      return [data.value];
 
     case 'business':
     case 'position':
@@ -53,10 +61,14 @@ export const toShow = (data: any) => {
     case 'labor':
     case 'positionMLevel':
     case 'wkTask':
-      return [data.value + '---' + data.showValue]
+    case 'LevelTemplate':
+    case 'LevelMTemplate':
+    case 'vacationType':
+    case 'addSignType':
+      return [data.value + '---' + data.showValue];
 
     case 'user':
-      return null
+      return null;
 
     case 'depGroup':
     case 'group':
@@ -67,7 +79,7 @@ export const toShow = (data: any) => {
         for (let i = 0; i < newValue.length; i++) {
           valueArray.push(newValue[i] + '---' + newShowValue[i]);
         }
-        return valueArray
+        return valueArray;
       } else return null;
 
     case 'currUser':
@@ -77,9 +89,10 @@ export const toShow = (data: any) => {
     case 'currGroup':
       return data.showValue;
   }
-}
+};
 
 export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
+  console.log(dataKey, dataValue);
   let id = dataKey.split('-$-')[0];
   let baseControlType = dataKey.split('-$-')[1];
   let defaultValue = dataKey.split('-$-')[2];
@@ -97,20 +110,24 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'currDate':
       case 'currDatetime':
       case 'currJobNumber':
+      case 'totalVacationTime':
+      case 'totalReVacationTime':
+      case 'overTimeTotal':
+      case 'remainCardNumber':
+      case 'outcheckTime':
+      case 'vacationTime':
         return {
           [idName]: id,
           multipleNumber,
-          value: dataValue.replace(".", ""),
-        }
-  
+          value: dataValue.replace('.', ''),
+        };
       case 'multiple':
         return {
           [idName]: id,
           multipleNumber,
           value: dataValue,
-          showValue: dataValue
-        }
-
+          showValue: dataValue,
+        };
       case 'files':
         if (dataValue) {
           let { fileList } = dataValue;
@@ -122,39 +139,42 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
             [idName]: id,
             multipleNumber,
             value: filesUrl.length > 0 ? filesUrl.join(',') : '',
-            showValue: ''
-          }
-        } else return {
-          [idName]: id,
-          multipleNumber,
-          value: '',
-          showValue: ''
-        }
-  
+            showValue: '',
+          };
+        } else
+          return {
+            [idName]: id,
+            multipleNumber,
+            value: '',
+            showValue: '',
+          };
       case 'date':
         return {
           [idName]: id,
           multipleNumber,
-          value: (moment(dataValue).format('YYYY-MM-DD')),
-          showValue: (moment(dataValue).format('YYYY-MM-DD'))
-        }
-  
+          value: moment(dataValue).format('YYYY-MM-DD'),
+          showValue: moment(dataValue).format('YYYY-MM-DD'),
+        };
       case 'datetime':
+      case 'vacationStartTime':
+      case 'vacationEndTime':
+      case 'overTimeStart':
+      case 'overTimeEnd':
+      case 'outCheckStartTime':
+      case 'outCheckEndTime':
         return {
           [idName]: id,
           multipleNumber,
-          value: (moment(dataValue).format('YYYY-MM-DD HH:mm')),
-          showValue: (moment(dataValue).format('YYYY-MM-DD HH:mm'))
-        }
-  
+          value: moment(dataValue).format('YYYY-MM-DD HH:mm'),
+          showValue: moment(dataValue).format('YYYY-MM-DD HH:mm'),
+        };
       case 'select':
         return {
           [idName]: id,
           multipleNumber,
           value: dataValue[0],
-          showValue: dataValue[0]
-        }
-  
+          showValue: dataValue[0],
+        };
       case 'business':
       case 'position':
       case 'job':
@@ -164,15 +184,18 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'labor':
       case 'positionMLevel':
       case 'wkTask':
+      case 'LevelTemplate':
+      case 'LevelMTemplate':
+      case 'vacationType':
+      case 'addSignType':
         return {
           [idName]: id,
           multipleNumber,
           value: dataValue[0].split('---')[0],
-          showValue: dataValue[0].split('---')[1]
-        }
-  
-      case 'user': 
-        let newUserValue:any = [];
+          showValue: dataValue[0].split('---')[1],
+        };
+      case 'user':
+        let newUserValue: any = [];
         let newUserShowValue: any = [];
         for (let indexValue of dataValue) {
           newUserValue.push(indexValue.split('---')[0]);
@@ -181,13 +204,12 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
         return {
           [idName]: id,
           multipleNumber,
-          value: newUserValue[newUserValue.length-1],
-          showValue: newUserShowValue[newUserShowValue.length-1]
-        }
-
+          value: newUserValue[newUserValue.length - 1],
+          showValue: newUserShowValue[newUserShowValue.length - 1],
+        };
       case 'depGroup':
       case 'group':
-        let newValue:any = [];
+        let newValue: any = [];
         let newShowValue: any = [];
         for (let indexValue of dataValue) {
           newValue.push(indexValue.split('---')[0]);
@@ -197,10 +219,8 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
           [idName]: id,
           multipleNumber,
           value: newValue.join(','),
-          showValue: newShowValue.join(',')
-        }
-  
-  
+          showValue: newShowValue.join(','),
+        };
       case 'currUser':
       case 'currBusiness':
       case 'currBusiness2':
@@ -210,8 +230,8 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
           [idName]: id,
           multipleNumber,
           value: defaultValue,
-          showValue: defaultShowValue
-        }
+          showValue: defaultShowValue,
+        };
     }
   } else {
     if (baseControlType === 'user') {
@@ -219,15 +239,15 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
         [idName]: id,
         multipleNumber,
         value: defaultValue,
-        showValue: defaultShowValue
-      }
+        showValue: defaultShowValue,
+      };
     } else {
       return {
         [idName]: id,
         multipleNumber,
         value: '',
-        showValue: ''
-      }
+        showValue: '',
+      };
     }
   }
-}
+};

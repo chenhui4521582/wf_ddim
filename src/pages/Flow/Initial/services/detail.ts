@@ -29,7 +29,7 @@ export interface IFormDetail {
 export async function queryDetail(id: number) {
   return request('/api/talentIm/wfresform/getDetail', {
     method: 'post',
-    data: { id }
+    data: { id },
   });
 }
 
@@ -43,13 +43,13 @@ export interface IFormData {
 interface ISaveFlow {
   resFormId: string | number;
   wfResFormSaveItemCrudParamList: IFormData[];
-  wfTaskFormFilesCrudParamList: []
+  wfTaskFormFilesCrudParamList: [];
 }
 
 export async function saveFlow(data: ISaveFlow) {
   return request('/api/talentIm/wftaskformForIm/saveTaskForm', {
     method: 'post',
-    data
+    data,
   });
 }
 
@@ -65,6 +65,90 @@ export interface IFlowStep {
 export async function queryRule(resApprovalId: number) {
   return request('/api/talentIm/wfresapprstep/listByApprovalId', {
     method: 'post',
-    data: { resApprovalId }
+    data: { resApprovalId },
+  });
+}
+
+export interface ICurrentControl {
+  name: String;
+  endTime: String;
+  startTime: String;
+  type: String | Number;
+  typeId: String | Number;
+  apiType: String | Number;
+  userCode: String;
+  lock: Boolean;
+}
+
+export interface IVacationTime {
+  time: Number;
+  unit: Number;
+  isTrue: Boolean;
+  reason: String;
+}
+
+/** 获取请假/销假类型 总计时长 **/
+export function queryTotalVacationTime(params: ICurrentControl) {
+  return request(`/api/talentIm/attendenceControl/vacationTime`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export interface IOverTimeParams {
+  overTimeEnd: String;
+  overTimeStart: String;
+}
+
+export interface IOverTimeRes {
+  hour: Number;
+}
+
+/** 获取加班类型 总计时长 **/
+export function queryTotalOvertime(params: IOverTimeParams) {
+  return request(`/api/talentIm/attendenceControl/overTime`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export interface IRemainCardNumberRes {
+  surplus: Number;
+}
+
+/** 获取补卡剩余次数 **/
+export function queryRemainCardNumber(userCode: String) {
+  return request(`/api/talentIm/attendenceControl/archiveReplaceCardNumber`, {
+    method: 'POST',
+    data: { userCode },
+  });
+}
+
+export interface IOutcheckTimeParams {
+  outcheckTimeEnd: String;
+  outcheckTimeStart: String;
+}
+
+export interface IOutcheckTimeRes {
+  hour: Number;
+}
+
+/** 获取补卡剩余次数 **/
+export function queryTotalOutcheckTime(params: IOutcheckTimeParams) {
+  return request(`/api/talentIm/attendenceControl/getOutCheckTime`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export interface IAvailableTimeRes {
+  currentLeft: Number;
+}
+
+/** 获取可休年假天数 **/
+export function queryAvailableTime(userCode: String) {
+  return request(`/api/talentIm/attendenceControl/getAvailableTime`, {
+    method: 'POST',
+    data: { userCode },
   });
 }

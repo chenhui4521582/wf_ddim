@@ -3,7 +3,7 @@ import request from '@/utils/request';
 // 模板类型
 export async function queryModuleCategory() {
   return request(`/api/talentIm/wfResFormCategory/getCategoryList`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
@@ -32,50 +32,49 @@ export async function queryDepartment(level: number) {
 // 公司下拉
 export async function queryCompany() {
   return request(`/api/talentIm/company/listCompanyOption`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 // 劳动关系下拉
 export async function queryLabor() {
   return request(`/api/talentIm/laborRelation/listOption`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 // 职位
 export async function queryTitle() {
   return request(`/api/talentIm/employeeRoster/listTitle`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 // 职位
 export async function queryJob() {
   return request(`/api/talentIm/job/listJobOption`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 // 职级
 export async function queryRank() {
   return request(`/api/talentIm/employeeRoster/listRank`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
 // 管理职级
 export async function queryMRank() {
   return request(`/api/talentIm/employeeRoster/listManagementRank`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
-
 
 // 成本中心
 export async function queryCost() {
   return request(`/api/talentIm/costCenter/listOption`, {
-    method: 'POST'
+    method: 'POST',
   });
 }
 
@@ -85,7 +84,21 @@ export async function queryWKTask() {
     method: 'POST',
     data: {
       pageNum: 1,
-      pageSize: 20
-    }
+      pageSize: 20,
+    },
+  });
+}
+
+/** 获取请假/销假类型 **/
+export function queryVacationType() {
+  return request(`/api/talentIm/attendenceControl/listHoliday`, {
+    method: 'POST',
+  });
+}
+
+/** 获取补卡类型 **/
+export function querySignType() {
+  return request(`/api/talentIm/attendenceControl/getAddSignType`, {
+    method: 'POST',
   });
 }

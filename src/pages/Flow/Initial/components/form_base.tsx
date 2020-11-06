@@ -7,81 +7,106 @@ import MultiplePicker from './multiplePicker';
 export const FormContent = (props: any, ref: any) => {
   const { data, onChange, value, setFieldsValue } = props;
   const { baseControlType, isLocked, name, isRequired } = data;
-  const newProps = { onChange, value, disabled: isLocked === 1, setFieldsValue, username: data.userName, formnameid: data.formnameid };
+  const newProps = {
+    onChange,
+    value,
+    disabled: isLocked === 1,
+    username: data.userName,
+    formnameid: data.formnameid,
+  };
+  console.log(newProps);
   switch (baseControlType) {
     // 单行文本
     case 'text':
     case 'formNumber':
     case 'currJobNumber':
-    // case 'title':
-      return <InputItem {...newProps} style={{textAlign: 'right'}}>
-        {name}
-        {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-      </InputItem>;
-
+    case 'totalVacationTime':
+    case 'totalReVacationTime':
+    case 'overTimeTotal':
+    case 'remainCardNumber':
+    case 'vacationTime':
+    case 'outCheckTime':
+      return (
+        <InputItem {...newProps} style={{ textAlign: 'right' }}>
+          {name}
+          {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+        </InputItem>
+      );
     case 'title':
       return (
         <TextareaItem
-          title={<div>
-            {name}
-            {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-          </div>}
+          title={
+            <div>
+              {name}
+              {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+            </div>
+          }
           {...newProps}
           rows={2}
         ></TextareaItem>
-      )
-
+      );
     // 多行文本
     case 'areatext':
     case 'remark':
     case 'title':
       return (
         <TextareaItem
-          title={<div>
-            {name}
-            {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-          </div>}
+          title={
+            <div>
+              {name}
+              {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+            </div>
+          }
           {...newProps}
           rows={4}
         ></TextareaItem>
-      )
-
+      );
     // 数字
     case 'number':
-      return <InputItem type="number" {...newProps} style={{textAlign: 'right'}}>
-        {name}
-        {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-      </InputItem>;
-
+      return (
+        <InputItem type="number" {...newProps} style={{ textAlign: 'right' }}>
+          {name}
+          {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+        </InputItem>
+      );
     // 金额
     case 'money':
-      return <InputItem type="money" {...newProps}>
-        {name}
-        {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-      </InputItem>;
-
+      return (
+        <InputItem type="money" {...newProps}>
+          {name}
+          {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+        </InputItem>
+      );
     // 日期
     case 'date':
-      return(
+      return (
         <DatePicker mode="date" {...newProps}>
           <List.Item arrow="horizontal">
-            <span style={{color: (newProps.disabled) ? '#bbb' : '#000'}}>{name}</span>
-            {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
+            <span style={{ color: newProps.disabled ? '#bbb' : '#000' }}>
+              {name}
+            </span>
+            {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
           </List.Item>
         </DatePicker>
-      )
-
+      );
     // 时间
     case 'datetime':
+    case 'vacationStartTime':
+    case 'vacationEndTime':
+    case 'overTimeStart':
+    case 'overTimeEnd':
+    case 'outCheckStartTime':
+    case 'outCheckEndTime':
       return (
         <DatePicker {...newProps}>
           <List.Item arrow="horizontal">
-            <span style={{color: (newProps.disabled) ? '#bbb' : '#000'}}>{name}</span>
-            {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
+            <span style={{ color: newProps.disabled ? '#bbb' : '#000' }}>
+              {name}
+            </span>
+            {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
           </List.Item>
         </DatePicker>
-      )
-
+      );
     // 单选框
     case 'user':
     case 'select':
@@ -96,65 +121,71 @@ export const FormContent = (props: any, ref: any) => {
     case 'group':
     case 'positionMLevel':
     case 'wkTask':
-      return <SelectTemplate newProps={newProps} data={data} type={baseControlType}></SelectTemplate>;
-
-    // case 'user':    
+    case 'LevelTemplate':
+    case 'LevelMTemplate':
+    case 'vacationType':
+    case 'addSignType':
+      return (
+        <SelectTemplate
+          newProps={newProps}
+          data={data}
+          type={baseControlType}
+        ></SelectTemplate>
+      );
+    // case 'user':
     case 'currUser':
     case 'currBusiness':
     case 'currBusiness2':
     case 'currDate':
     case 'currDatetime':
-      return <InputItem {...newProps} style={{textAlign: 'right'}}>
-        {name}
-        {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
-      </InputItem>;
-
+    case 'currDepartment':
+    case 'currCompany':
+      return (
+        <InputItem {...newProps} style={{ textAlign: 'right' }}>
+          {name}
+          {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
+        </InputItem>
+      );
     case 'currDepGroup':
     case 'currGroup':
-      return (
-        <TextareaItem
-          title={name}
-          {...newProps}
-          rows={2}
-        ></TextareaItem>
-      )
-
+      return <TextareaItem title={name} {...newProps} rows={2}></TextareaItem>;
     // 多选框
     case 'multiple':
-      return <MultiplePicker newProps={newProps} type={baseControlType} data={data}></MultiplePicker>
-
+      return (
+        <MultiplePicker
+          newProps={newProps}
+          type={baseControlType}
+          data={data}
+        ></MultiplePicker>
+      );
     // 附件
     case 'files':
       return (
         <div>
           <List>
-            <List.Item extra={
-              <Upload
-                action="/api/transmit/upload/saveFile"
-                // onChange={newProps.onChange}
-                // disabled={newProps.disabled}
-                // fileList={[]}
-                {...newProps}
-              >
-                <Button>
-                  上传
-                </Button>
-              </Upload>
-            }>
-              <span style={{color: (newProps.disabled) ? '#bbb' : '#000'}}>{name}</span>
-              {isRequired === 1 && <span style={{color: 'red'}}>*</span>}
+            <List.Item
+              extra={
+                <Upload action="/api/transmit/upload/saveFile" {...newProps}>
+                  <Button>上传</Button>
+                </Upload>
+              }
+            >
+              <span style={{ color: newProps.disabled ? '#bbb' : '#000' }}>
+                {name}
+              </span>
+              {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
             </List.Item>
           </List>
         </div>
-      )
+      );
     default:
-      return <></>
+      return <></>;
   }
-}
+};
 
 export const capitalize = (s: string) => {
-  if (typeof s !== 'string') return ''
-  return s.charAt(0).toLowerCase() + s.slice(1)
-}
+  if (typeof s !== 'string') return '';
+  return s.charAt(0).toLowerCase() + s.slice(1);
+};
 
 export const FormBase = React.forwardRef(FormContent);

@@ -7,7 +7,7 @@ import { Toast } from 'antd-mobile';
 import { appCall } from '@/utils/bridge.js';
 
 interface codeMessageType {
-  [key: number]: string
+  [key: number]: string;
 }
 
 const codeMessage: codeMessageType = {
@@ -53,27 +53,28 @@ const request = extend({
 
 const getIMToken = async () => {
   return new Promise((resolve, reject) => {
-    appCall.callIOSHandler("ddimGetTokenCallBack", {}, function(response: any) {
+    appCall.callIOSHandler('ddimGetTokenCallBack', {}, function(response: any) {
       const { data } = JSON.parse(response);
       resolve(data);
     });
-  })
-}
+  });
+};
 
 request.use(async (ctx, next) => {
   // let dataToken = await getIMToken();
-  let dataToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDM2ODUwNzI3ODcsInBheWxvYWQiOiJcIjU5NDg5YjU3NWQwZDRhZmQ5OGE4Yjc5YWNhOTQ1NGE0XCIifQ.N9yjvm1jRJstQ45B7Xj7VTIU44NBM0s3uDfTUJaMlso'
+  let dataToken =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDQ2NTE5MjIzMTksInBheWxvYWQiOiJcIjR3NGI4dDBsM3Q2ZTVmb29hempqNHZ0ejhlMTlwY3cyXCIifQ.q99Wd4wg4XzUcjHER_qW-xyrZwn8er_AV0A3PomTeEk';
   const { req } = ctx;
   const { options } = req;
   options.headers = {
     token: dataToken as string,
-    ...options.headers
-  }
+    ...options.headers,
+  };
   await next();
   const { res } = ctx;
   if (res.status !== 200) {
     Toast.offline(res.msg, 3);
   }
-})
+});
 
 export default request;

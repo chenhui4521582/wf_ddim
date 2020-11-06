@@ -1,7 +1,8 @@
 body {
-  background-color: #F0F4F7 !important;
+  background-color: #f0f4f7 !important;
 }
-@supports (bottom: constant(safe-area-inset-top)) or (bottom: env(safe-area-inset-top)) {
+@supports (bottom: constant(safe-area-inset-top)) or
+  (bottom: env(safe-area-inset-top)) {
   body {
     padding-top: constant(safe-area-inset-top);
     padding-top: env(safe-area-inset-top);
@@ -13,7 +14,6 @@ body {
 .am-textarea-control textarea {
   font-size: 14px !important;
 }
-
 
 .am-list-item .am-input-control input {
   font-size: 14px !important;
@@ -83,7 +83,7 @@ body {
   font-size: 16px !important;
 }
 .am-list-item .am-list-line .am-list-extra {
-  flex-basis: 65% !important;
+  flex-basis: 50% !important;
 }
 
 #advices .am-list-item .am-list-line .am-list-extra {

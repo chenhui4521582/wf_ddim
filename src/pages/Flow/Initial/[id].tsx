@@ -1,28 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { queryDetail, IFormDetail, saveFlow, queryRule, IFlowStep } from './services/detail';
+import { 
+  queryDetail,
+  IFormDetail,
+  saveFlow,
+  queryRule,
+  IFlowStep, 
+  ICurrentControl, 
+  queryTotalVacationTime, 
+  IVacationTime, 
+  IOverTimeParams,
+  IOverTimeRes, 
+  queryTotalOvertime,
+  IRemainCardNumberRes,
+  queryRemainCardNumber,
+  IOutcheckTimeParams,
+  IOutcheckTimeRes,
+  queryTotalOutcheckTime,
+  IAvailableTimeRes,
+  queryAvailableTime
+} from './services/detail';
 import { GlobalResParams } from '@/utils/global';
-import { useModel, history } from 'umi';
+import { useModel, history, Switch } from 'umi';
 import { WingBlank, SegmentedControl, WhiteSpace, Card, List, Button, Toast } from 'antd-mobile';
 import { FormBase } from './components/form_base';
 import shu from '@/assets/shu.png';
 import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toFormData } from './components/form_function';
 import { Form } from 'antd';
-
+import moment from 'moment'
 
 const validateMessages = {
   required: "'${name}' 是必填字段",
 };
-
 export default (props: any) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [detail, setDetail] = useState<IFormDetail>();
+  const [userCode, setUserCode] = useState<String>();
   const { setBarName } = useModel('useBarName');
   const id = Number(props.match.params.id);
   const [selected, setSelected] = useState(0);
   const [resApprovalId, setResApprovalId] = useState(-1);
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
+  let _currentControl = {} as ICurrentControl;
   useEffect(() => {
     async function getDetail() {
       let res: GlobalResParams<IFormDetail> = await queryDetail(id);
@@ -31,6 +51,23 @@ export default (props: any) => {
           item.canAdd = true
         }
         item.multipleNumber = 1;
+        /** 获取用户userCode **/
+        let userItem = item?.controlList?.find(list => {
+          return list.baseControlType === 'currUser';
+        })
+        const userCode = userItem?.defaultValue || '';
+        setUserCode(userCode);
+        /** 动态设置当前剩余补卡次数 **/
+        let remainCardNumberItem  = item?.controlList?.find(list => {
+          return list.baseControlType === 'remainCardNumber';
+        })
+        remainCardNumberItem && userCode && _queryRemainCardNumber(remainCardNumberItem, userCode);
+
+        /** 动态设置当前可休年假天数 **/
+        let vacationTimeItem  = item?.controlList?.find(list => {
+          return list.baseControlType === 'vacationTime';
+        })
+        vacationTimeItem && userCode && _queryAvailableTime(vacationTimeItem, userCode);
       });
       setDetail(res?.obj);
       setBarName(res?.obj?.name);
@@ -99,7 +136,7 @@ export default (props: any) => {
     let formData: any[] = [];
     Object.keys(values).map(item => {
       let formDataItem = toFormData(item, values[item], 'id');
-      formData.push(formDataItem);
+      formDataItem && formData.push(formDataItem);
     });
     let idArray: number[] = [];
     formData.map(item => {
@@ -126,6 +163,140 @@ export default (props: any) => {
     Toast.fail(messages, 2);
   }
 
+  /** 获取当月剩余补卡次数 **/
+  async function _queryRemainCardNumber(item: any, userCode: String) {
+    let res: GlobalResParams<IRemainCardNumberRes> = await queryRemainCardNumber(userCode);
+    if(res.status === 200) {
+      let { surplus } = res?.obj; 
+      let params:any = {} 
+      params[item.formnameid] = surplus + ""
+      form.setFieldsValue(params);
+    } 
+  }
+
+  /** 获取可休年假天数 **/
+  async function _queryAvailableTime(item: any, userCode: String) {
+    let res: GlobalResParams<IAvailableTimeRes> = await queryAvailableTime(userCode);
+    if(res.status === 200) {
+      let { currentLeft } = res?.obj; 
+      let params:any = {} 
+      params[item.formnameid] = currentLeft + ""
+      form.setFieldsValue(params);
+    } 
+  }
+
+  /** 
+   * 当表单内控件的值发送变化的时候的回调
+   * @params
+   *  changedValues 发生变化的控件返回值
+   *  allValues  全部控件的返回值
+  **/
+  const onValuesChange = (changedValues: any[], allValues: any) => {
+    /** 当前页面所有的控件 **/
+    const controlList: any[] = detail?.formChildlist[0]?.controlList || [];
+    /** 当前发生改变的控件的key **/ 
+    const currentControlKey: any = Object.keys(changedValues)[0];
+    /** 当前发生改变的控件名称 **/
+    const currentControlName: String = currentControlKey && currentControlKey.split('-$-')[1];
+    /** 当前发生改变的控件的value **/
+    const currentControlValue: any = changedValues[currentControlKey];
+    /** 判断当前页面是否有请假,销假控件 **/
+    controlList.map((item: any) => {
+      switch (item.baseControlType) {
+        /** 请假控件 **/
+        case 'totalVacationTime': 
+          _currentControl.type = 1;
+          _currentControl.apiType = 1;
+          _currentControl.name = item.formnameid;
+          break;
+        /** 销假控件 **/
+        case 'totalReVacationTime': 
+          _currentControl.type = 2;
+          _currentControl.apiType = 1;
+          _currentControl.name = item.formnameid;
+          break;
+        /** 加班控件 **/
+        case 'overTimeTotal':
+          _currentControl.apiType = 2;
+          _currentControl.name = item.formnameid;
+          break;
+        /** 外出, 出差控件 **/
+        case 'outCheckTime':
+          _currentControl.apiType = 3;
+          _currentControl.name = item.formnameid;
+          break;
+      }
+    })
+    switch (currentControlName) {
+      /** 判断当前控件是不是请假,销假时间控件 **/
+      /** 判断当前控件是不是加班时间控件 **/
+      case 'vacationStartTime':
+      case 'overTimeStart':
+      case 'outCheckStartTime':
+        _currentControl.lock = false
+        _currentControl.startTime  = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
+        break;
+      /** 判断当前控件是不是请假,销假时间控件 **/
+      /** 判断当前控件是不是加班时间控件 **/
+      case 'vacationEndTime':
+      case 'overTimeEnd':
+      case 'outCheckEndTime':
+        _currentControl.lock = false
+        _currentControl.endTime = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
+        break;
+      case 'vacationType':
+        _currentControl.typeId = currentControlValue[0]?.split('---')[0] || 1;
+        break;   
+    }
+    /** 根据apiType 类型,重新拼装参数并且调取接口 **/
+    const { endTime, startTime, type, typeId, apiType, lock = false} = _currentControl;
+    if (apiType === 1 && endTime && startTime && type && typeId && userCode && !lock) {
+      _queryTotalVacationTime({endTime, startTime, type, typeId: ~~typeId, userCode});
+    } else if (apiType === 2 && endTime && startTime && !lock) {
+      _queryTotalOvertime({overTimeEnd: endTime, overTimeStart: startTime});
+    } else if (apiType === 3 && endTime && startTime && !lock) {
+      _queryTotalOutcheckTime({outcheckTimeEnd: endTime, outcheckTimeStart: startTime})
+    }
+    /** 请求接口获取请假,销假总时长 **/
+    async function _queryTotalVacationTime (params: any) {
+      let res: GlobalResParams<IVacationTime> = await queryTotalVacationTime(params);
+      if(res.status === 200) {
+        let {unit, time, isTrue, reason} = res?.obj;  
+        if(!isTrue) {
+          Toast.fail(reason, 2);
+          return
+        }
+        form.setFieldsValue(_updateFieldsValue(time, unit));
+      }   
+    }
+    /** 请求接口获取请假,销假总时长 **/
+    async function _queryTotalOvertime (params: IOverTimeParams) {
+      let res: GlobalResParams<IOverTimeRes> = await queryTotalOvertime(params);
+      if(res.status === 200) {
+        let { hour } = res?.obj;  
+        form.setFieldsValue(_updateFieldsValue(hour, 0));
+      }   
+    }
+    /** 请求接口获取外出,出差总时长 **/
+    async function _queryTotalOutcheckTime (params: IOutcheckTimeParams) {
+      let res: GlobalResParams<IOutcheckTimeRes> = await queryTotalOutcheckTime(params);
+      if(res.status === 200) {
+        let { hour } = res?.obj;  
+        form.setFieldsValue(_updateFieldsValue(hour, 0));
+        
+      }   
+    }
+    const _updateFieldsValue = (time: Number, unit: Number): any => {
+      const { name } = _currentControl;
+      console.log(name)
+      let allControl = allValues;
+      console.log(allControl)
+      allControl[ name ] = `${time}${unit == 1 ? '天' : '小时'}`
+      _currentControl.lock = true
+      return allControl
+    }
+  }
+
   return (
     <div>
       <WingBlank size="lg">
@@ -139,7 +310,7 @@ export default (props: any) => {
         <WhiteSpace size="lg" />
         {
           selected === 0 ?
-          <Form form={form} onFinish={handleSubmit} onFinishFailed={handleError} validateMessages={validateMessages}>
+          <Form form={form} onFinish={handleSubmit} onFinishFailed={handleError} validateMessages={validateMessages} onValuesChange={onValuesChange}>
             {
               detail?.formChildlist?.map(item => {
                 return (
@@ -170,22 +341,7 @@ export default (props: any) => {
                                   >
                                     <FormBase data={formList} setFieldsValue={form.setFieldsValue}></FormBase>
                                   </Form.Item>
-                                  {/* <div style={{color: 'red'}}>
-                                    {(form.getFieldError(`${formId}`) && `${formList.name}必填`)}
-                                  </div> */}
                                 </div>
-                                // <div key={formList.id + '-' + item.sort}>
-                                //   {
-                                //     getFieldDecorator(`${formId}`, {
-                                //       rules: [{required: formList.isRequired === 1}],
-                                //       initialValue: formList.defaultShowValue || formList.defaultValue,
-                                //     })
-                                //     (<FormBase data={formList} setFieldsValue={setFieldsValue}></FormBase>)
-                                //   }
-                                //   <div style={{color: 'red'}}>
-                                //     {(getFieldError(`${formId}`) && `${formList.name}必填`)}
-                                //   </div>
-                                // </div>
                               )
                             })
                           }
