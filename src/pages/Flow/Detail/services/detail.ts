@@ -32,7 +32,7 @@ export interface IFormDetail {
 export async function queryDetail(id: number) {
   return request('/api/talentIm/wftaskformForIm/getDetail', {
     method: 'post',
-    data: { id }
+    data: { id },
   });
 }
 
@@ -49,7 +49,7 @@ export interface IAdvice {
 export async function queryFlowAdvice(taskFormId: number) {
   return request('/api/talentIm/wftaskapprstepForIm/queryWfLogList', {
     method: 'post',
-    data: { taskFormId }
+    data: { taskFormId },
   });
 }
 
@@ -63,7 +63,7 @@ export interface IButton {
 export async function queryButton(taskFormId: number) {
   return request('/api/talentIm/wftaskapprstepForIm/queryButtonPermission', {
     method: 'post',
-    data: { taskFormId }
+    data: { taskFormId },
   });
 }
 
@@ -71,7 +71,7 @@ export async function queryButton(taskFormId: number) {
 export async function processFlow(data: any) {
   return request('/api/talentIm/wftaskformForIm/processTaskForm', {
     method: 'post',
-    data
+    data,
   });
 }
 
@@ -79,7 +79,7 @@ export async function processFlow(data: any) {
 export async function cancelFlow(id: number) {
   return request('/api/talentIm/wftaskformForIm/canceled', {
     method: 'post',
-    data: { id }
+    data: { id },
   });
 }
 
@@ -92,9 +92,20 @@ export interface IFlowStep {
   currentStepUserNames: string;
 }
 
+export interface ICurrentControl {
+  name: String;
+  endTime: String;
+  startTime: String;
+  type: String | Number;
+  typeId: String | Number;
+  apiType: String | Number;
+  userCode: String;
+  lock: Boolean;
+}
+
 export async function queryRule(taskFormId: number) {
   return request('/api/talentIm/wftaskapprstepForIm/queryStepLogList', {
     method: 'post',
-    data: { taskFormId }
+    data: { taskFormId },
   });
 }

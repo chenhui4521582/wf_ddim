@@ -102,3 +102,10 @@ export function querySignType() {
     method: 'POST',
   });
 }
+
+// 获取单位列表
+export async function getUnitType() {
+  return request(`/api/talentIm/attendenceControl/getUnitType`, {
+    method: 'POST',
+  });
+}

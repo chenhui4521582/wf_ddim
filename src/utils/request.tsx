@@ -61,9 +61,11 @@ const getIMToken = async () => {
 };
 
 request.use(async (ctx, next) => {
-  // let dataToken = await getIMToken();
-  let dataToken =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDQ2NTE5MjIzMTksInBheWxvYWQiOiJcIjR3NGI4dDBsM3Q2ZTVmb29hempqNHZ0ejhlMTlwY3cyXCIifQ.q99Wd4wg4XzUcjHER_qW-xyrZwn8er_AV0A3PomTeEk';
+  let dataToken = await getIMToken();
+
+  // let dataToken =
+  //   'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDQ5MTk3NTgxMTIsInBheWxvYWQiOiJcIjVxeGhiam5yeTc4NW9hOWI0dTl5aGE4dGlyMXg2eGNjXCIifQ.o8uTPNFY2m8Qs1rcG4Vw58jdWwQtePQep-ZjlfNuU_o';
+  // alert(dataToken)
   const { req } = ctx;
   const { options } = req;
   options.headers = {

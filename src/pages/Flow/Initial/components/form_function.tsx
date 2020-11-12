@@ -1,5 +1,10 @@
 import moment from 'moment';
 
+interface IUnitList {
+  code: number;
+  desc: string;
+}
+
 export const toShow = (data: any) => {
   switch (data.baseControlType) {
     case 'text':
@@ -13,13 +18,14 @@ export const toShow = (data: any) => {
     case 'currDatetime':
     case 'title':
     case 'multiple':
+    case 'remainCardNumber':
+      return data.value;
+    case 'outcheckTime':
+    case 'vacationTime':
     case 'totalVacationTime':
     case 'totalReVacationTime':
     case 'overTimeTotal':
-    case 'remainCardNumber':
-    case 'outcheckTime':
-    case 'vacationTime':
-      return data.value;
+      return data.showValue;
     case 'files':
       const { value } = data;
       let newFileList: any[] = [];
@@ -91,7 +97,12 @@ export const toShow = (data: any) => {
   }
 };
 
-export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
+export const toFormData = (
+  dataKey: any,
+  dataValue: any,
+  idName: string,
+  unitList?: IUnitList[],
+) => {
   console.log(dataKey, dataValue);
   let id = dataKey.split('-$-')[0];
   let baseControlType = dataKey.split('-$-')[1];
@@ -110,16 +121,33 @@ export const toFormData = (dataKey: any, dataValue: any, idName: string) => {
       case 'currDate':
       case 'currDatetime':
       case 'currJobNumber':
-      case 'totalVacationTime':
-      case 'totalReVacationTime':
-      case 'overTimeTotal':
       case 'remainCardNumber':
-      case 'outcheckTime':
-      case 'vacationTime':
         return {
           [idName]: id,
           multipleNumber,
           value: dataValue.replace('.', ''),
+        };
+      case 'totalVacationTime':
+      case 'totalReVacationTime':
+      case 'overTimeTotal':
+      case 'outCheckTime':
+      case 'vacationTime':
+        // 设置单位
+        let unitType: any = null;
+        let unitValue = dataValue || '';
+        let unitShowValue = dataValue || '';
+        unitList?.map(unitItem => {
+          if (unitShowValue?.indexOf(unitItem.desc) > -1) {
+            unitType = unitItem.code;
+          }
+        });
+        unitValue = unitValue?.replace('小时', '')?.replace('天', '');
+        return {
+          [idName]: id,
+          multipleNumber,
+          unitType,
+          value: unitValue,
+          showValue: unitShowValue,
         };
       case 'multiple':
         return {

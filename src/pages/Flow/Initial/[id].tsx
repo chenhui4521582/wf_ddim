@@ -20,6 +20,7 @@ import {
   queryAvailableTime
 } from './services/detail';
 import { GlobalResParams } from '@/utils/global';
+import { getUnitType } from '@/services/global';
 import { useModel, history, Switch } from 'umi';
 import { WingBlank, SegmentedControl, WhiteSpace, Card, List, Button, Toast } from 'antd-mobile';
 import { FormBase } from './components/form_base';
@@ -27,11 +28,17 @@ import shu from '@/assets/shu.png';
 import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toFormData } from './components/form_function';
 import { Form } from 'antd';
-import moment from 'moment'
+import moment from 'moment';
 
 const validateMessages = {
   required: "'${name}' 是必填字段",
 };
+
+interface IUnitList {
+  code: number;
+  desc: string;
+}
+
 export default (props: any) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -42,10 +49,15 @@ export default (props: any) => {
   const [selected, setSelected] = useState(0);
   const [resApprovalId, setResApprovalId] = useState(-1);
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
+  const [unitList, steUnitList] = useState<IUnitList[]>();
   let _currentControl = {} as ICurrentControl;
   useEffect(() => {
     async function getDetail() {
       let res: GlobalResParams<IFormDetail> = await queryDetail(id);
+      let json1: GlobalResParams<IUnitList[]> = await getUnitType();
+      if (json1.status === 200) {
+        steUnitList(json1?.obj);
+      }
       res?.obj.formChildlist.map(item => {
         if (item.type === 1) {
           item.canAdd = true
@@ -135,7 +147,7 @@ export default (props: any) => {
     setLoading(true);
     let formData: any[] = [];
     Object.keys(values).map(item => {
-      let formDataItem = toFormData(item, values[item], 'id');
+      let formDataItem = toFormData(item, values[item], 'id', unitList);
       formDataItem && formData.push(formDataItem);
     });
     let idArray: number[] = [];
@@ -169,7 +181,7 @@ export default (props: any) => {
     if(res.status === 200) {
       let { surplus } = res?.obj; 
       let params:any = {} 
-      params[item.formnameid] = surplus + ""
+      params[item.formnameid] = surplus + "次"
       form.setFieldsValue(params);
     } 
   }
@@ -180,7 +192,7 @@ export default (props: any) => {
     if(res.status === 200) {
       let { currentLeft } = res?.obj; 
       let params:any = {} 
-      params[item.formnameid] = currentLeft + ""
+      params[item.formnameid] = currentLeft + "天"
       form.setFieldsValue(params);
     } 
   }
@@ -291,7 +303,7 @@ export default (props: any) => {
       console.log(name)
       let allControl = allValues;
       console.log(allControl)
-      allControl[ name ] = `${time}${unit == 1 ? '天' : '小时'}`
+      allControl[ name as any ] = `${time}${unit == 1 ? '天' : '小时'}`
       _currentControl.lock = true
       return allControl
     }
