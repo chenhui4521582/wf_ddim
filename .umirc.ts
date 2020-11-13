@@ -6,7 +6,7 @@ export default defineConfig({
   },
   proxy: {
     '/api': {
-      target: 'https://ddimh5.jdd-hub.com',
+      target: 'http://172.16.248.175:8087/',
       changeOrigin: true,
       pathRewrite: { '^/api': 'api' },
     },
