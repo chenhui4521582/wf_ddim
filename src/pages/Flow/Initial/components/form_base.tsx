@@ -11,10 +11,10 @@ export const FormContent = (props: any, ref: any) => {
     onChange,
     value,
     disabled: isLocked === 1,
+    setFieldsValue,
     username: data.userName,
     formnameid: data.formnameid,
   };
-  console.log(newProps);
   switch (baseControlType) {
     // 单行文本
     case 'text':
