@@ -260,6 +260,15 @@ export default (props: any) => {
       case 'vacationEndTime':
       case 'overTimeEnd':
       case 'outCheckEndTime':
+        if(!_currentControl.startTime 
+          ||
+          new Date(_currentControl.startTime).getTime() >= new Date(currentControlValue).getTime()) {
+          Toast.fail('开始时间需小于结束时间', 2);
+          const key = Object.keys(changedValues)[0];
+          allValues[key] = null
+          form.setFieldsValue(allValues);
+          return
+        } 
         _currentControl.lock = false
         _currentControl.endTime = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
         break;
@@ -276,6 +285,7 @@ export default (props: any) => {
     } else if (apiType === 3 && endTime && startTime && !lock) {
       _queryTotalOutcheckTime({outcheckTimeEnd: endTime, outcheckTimeStart: startTime})
     }
+
     /** 请求接口获取请假,销假总时长 **/
     async function _queryTotalVacationTime (params: any) {
       let res: GlobalResParams<IVacationTime> = await queryTotalVacationTime(params);
@@ -302,14 +312,11 @@ export default (props: any) => {
       if(res.status === 200) {
         let { hour } = res?.obj;  
         form.setFieldsValue(_updateFieldsValue(hour, 0));
-        
       }   
     }
     const _updateFieldsValue = (time: Number, unit: Number): any => {
       const { name } = _currentControl;
-      console.log(name)
       let allControl = allValues;
-      console.log(allControl)
       allControl[ name as any ] = `${time}${unit == 1 ? '天' : '小时'}`
       _currentControl.lock = true
       return allControl

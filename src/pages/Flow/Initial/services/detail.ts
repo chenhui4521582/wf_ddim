@@ -71,8 +71,8 @@ export async function queryRule(resApprovalId: number) {
 
 export interface ICurrentControl {
   name: String;
-  endTime: String;
-  startTime: String;
+  endTime: any;
+  startTime: any;
   type: String | Number;
   typeId: String | Number;
   apiType: String | Number;

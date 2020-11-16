@@ -257,6 +257,15 @@ export default (props: any) => {
       case 'vacationEndTime':
       case 'overTimeEnd':
       case 'outCheckEndTime':
+        if(!_currentControl.startTime 
+          ||
+          new Date(_currentControl.startTime).getTime() >= new Date(currentControlValue).getTime()) {
+          Toast.fail('开始时间需小于结束时间', 2);
+          const key = Object.keys(changedValues)[0];
+          allValues[key] = null
+          form.setFieldsValue(allValues);
+          return
+        } 
         _currentControl.lock = false
         _currentControl.endTime = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
         break;
