@@ -50,11 +50,13 @@ export default (props: any) => {
   const [resApprovalId, setResApprovalId] = useState(-1);
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
   const [unitList, steUnitList] = useState<IUnitList[]>();
+  const [controlList, setControlList] = useState<any[]>([]);
   let _currentControl = {} as ICurrentControl;
   useEffect(() => {
     async function getDetail() {
       let res: GlobalResParams<IFormDetail> = await queryDetail(id);
       let json1: GlobalResParams<IUnitList[]> = await getUnitType();
+      let list: any[] = []
       if (json1.status === 200) {
         steUnitList(json1?.obj);
       }
@@ -63,27 +65,34 @@ export default (props: any) => {
           item.canAdd = true
         }
         item.multipleNumber = 1;
-        /** 获取用户userCode **/
-        let userItem = item?.controlList?.find(list => {
-          return list.baseControlType === 'currUser';
+        item?.controlList?.map(innerItem => {
+          list.push(innerItem)
         })
-        const userCode = userItem?.defaultValue || '';
-        setUserCode(userCode);
-        /** 动态设置当前剩余补卡次数 **/
-        let remainCardNumberItem  = item?.controlList?.find(list => {
-          return list.baseControlType === 'remainCardNumber';
-        })
-        remainCardNumberItem && userCode && _queryRemainCardNumber(remainCardNumberItem, userCode);
-
-        /** 动态设置当前可休年假天数 **/
-        let vacationTimeItem  = item?.controlList?.find(list => {
-          return list.baseControlType === 'vacationTime';
-        })
-        vacationTimeItem && userCode && _queryAvailableTime(vacationTimeItem, userCode);
       });
+
+      /** 获取用户userCode **/
+      let userItem = list?.find(list => {
+        return list.baseControlType === 'currUser';
+      })
+      const userCode = userItem?.defaultValue || '';
+
+      /** 动态设置当前剩余补卡次数 **/
+      let remainCardNumberItem  = list?.find(list => {
+        return list.baseControlType === 'remainCardNumber';
+      })
+      remainCardNumberItem && userCode && _queryRemainCardNumber(remainCardNumberItem, userCode);
+
+      /** 动态设置当前可休年假天数 **/
+      let vacationTimeItem  = list?.find(list => {
+        return list.baseControlType === 'vacationTime';
+      })
+      vacationTimeItem && userCode && _queryAvailableTime(vacationTimeItem, userCode);
+
       setDetail(res?.obj);
       setBarName(res?.obj?.name);
       setResApprovalId(res?.obj?.resApprovalId);
+      setControlList(list);
+      setUserCode(userCode);
     }
     getDetail();
   }, []);
@@ -204,8 +213,6 @@ export default (props: any) => {
    *  allValues  全部控件的返回值
   **/
   const onValuesChange = (changedValues: any[], allValues: any) => {
-    /** 当前页面所有的控件 **/
-    const controlList: any[] = detail?.formChildlist[0]?.controlList || [];
     /** 当前发生改变的控件的key **/ 
     const currentControlKey: any = Object.keys(changedValues)[0];
     /** 当前发生改变的控件名称 **/

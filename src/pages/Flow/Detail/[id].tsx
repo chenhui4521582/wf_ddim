@@ -26,20 +26,17 @@ import styles from './detail.less';
 import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toShow, toFormData } from '../Initial/components/form_function';
 import moment from 'moment';
-
 const Item = List.Item;
 const Brief = Item.Brief;
-
 const validateMessages = {
   required: "'${name}' 是必填字段",
 };
-
 interface IUnitList {
   code: number;
   desc: string;
 }
-
 export default (props: any) => {
+  let _currentControl = {} as ICurrentControl;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState(true);
@@ -52,7 +49,7 @@ export default (props: any) => {
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
   const [unitList, steUnitList] = useState<IUnitList[]>();
   const [userCode, setUserCode] = useState<String>();
-  let _currentControl = {} as ICurrentControl;
+  const [controlList, setControlList] = useState<any[]>([]);
   const adviceStatus = {
     0: '没处理',
     1: '通过',
@@ -64,34 +61,40 @@ export default (props: any) => {
     async function getDetail() {
       let res: GlobalResParams<IFormDetail> = await queryDetail(id);
       let json1: GlobalResParams<IUnitList[]> = await getUnitType();
+      let list: any[] = []
       if (json1.status === 200) {
         steUnitList(json1?.obj);
       }
-      res?.obj.formChildlist.map(item => {
+      res?.obj.formChildlist.map((item) => {
         if (item.type === 1) {
           item.canAdd = true
         }
         item.multipleNumber = 1;
-        /** 获取用户userCode **/
-        let userItem = item?.controlList?.find(list => {
-          return list.baseControlType === 'currUser';
+        item?.controlList?.map(innerItem => {
+          list.push(innerItem)
         })
-        const userCode = userItem?.defaultValue || '';
-        setUserCode(userCode);
-        /** 动态设置当前剩余补卡次数 **/
-        let remainCardNumberItem  = item?.controlList?.find(list => {
-          return list.baseControlType === 'remainCardNumber';
-        })
-        remainCardNumberItem && userCode && _queryRemainCardNumber(remainCardNumberItem, userCode);
-
-        /** 动态设置当前可休年假天数 **/
-        let vacationTimeItem  = item?.controlList?.find(list => {
-          return list.baseControlType === 'vacationTime';
-        })
-        vacationTimeItem && userCode && _queryAvailableTime(vacationTimeItem, userCode);
       });
+      /** 获取用户userCode **/
+      let userItem = list?.find(list => {
+        return list.baseControlType === 'currUser';
+      })
+      const userCode = userItem?.defaultValue || '';
+      
+      /** 动态设置当前剩余补卡次数 **/
+      let remainCardNumberItem  = list?.find(list => {
+        return list.baseControlType === 'remainCardNumber';
+      })
+      remainCardNumberItem && userCode && _queryRemainCardNumber(remainCardNumberItem, userCode);
+
+      /** 动态设置当前可休年假天数 **/
+      let vacationTimeItem  = list?.find(list => {
+        return list.baseControlType === 'vacationTime';
+      })
+      vacationTimeItem && userCode && _queryAvailableTime(vacationTimeItem, userCode);
       setDetail(res?.obj);
       setBarName(res?.obj?.name);
+      setControlList(list);
+      setUserCode(userCode);
     }
     getDetail();
   }, [refresh]);
@@ -189,7 +192,6 @@ export default (props: any) => {
       form.setFieldsValue(params);
     } 
   }
-
   /** 获取可休年假天数 **/
   async function _queryAvailableTime(item: any, userCode: String) {
     let res: GlobalResParams<IAvailableTimeRes> = await queryAvailableTime(userCode);
@@ -208,8 +210,6 @@ export default (props: any) => {
    *  allValues  全部控件的返回值
   **/
   const onValuesChange = (changedValues: any[], allValues: any) => {
-    /** 当前页面所有的控件 **/
-    const controlList: any[] = detail?.formChildlist[0]?.controlList || [];
     /** 当前发生改变的控件的key **/ 
     const currentControlKey: any = Object.keys(changedValues)[0];
     /** 当前发生改变的控件名称 **/

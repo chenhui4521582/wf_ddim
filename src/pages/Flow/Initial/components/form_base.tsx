@@ -4,6 +4,7 @@ import SelectTemplate from './select_template';
 import { Upload, Button } from 'antd';
 import MultiplePicker from './multiplePicker';
 
+const Item = List.Item;
 export const FormContent = (props: any, ref: any) => {
   const { data, onChange, value, setFieldsValue } = props;
   const { baseControlType, isLocked, name, isRequired } = data;
@@ -50,16 +51,10 @@ export const FormContent = (props: any, ref: any) => {
     case 'remark':
     case 'title':
       return (
-        <TextareaItem
-          title={
-            <div>
-              {name}
-              {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
-            </div>
-          }
-          {...newProps}
-          rows={4}
-        ></TextareaItem>
+        <List className="text-list">
+          <Item>{name}</Item>
+          <TextareaItem {...newProps} rows={2} placeholder={`请输入${name}`} />
+        </List>
       );
     // 数字
     case 'number':
