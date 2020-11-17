@@ -7,8 +7,9 @@ import MultiplePicker from './multiplePicker';
 const Item = List.Item;
 export const FormContent = (props: any, ref: any) => {
   const { data, onChange, value, setFieldsValue } = props;
-  const { baseControlType, isLocked, name, isRequired } = data;
-  const newProps = {
+  const { baseControlType, isLocked, name, isRequired, fileList } = data;
+  let defaultFileList: any[] = [];
+  let newProps: any = {
     onChange,
     value,
     disabled: isLocked === 1,
@@ -16,6 +17,18 @@ export const FormContent = (props: any, ref: any) => {
     username: data.userName,
     formnameid: data.formnameid,
   };
+  if (fileList) {
+    fileList.map((item: any) => {
+      defaultFileList.push({
+        uid: item.id,
+        name: item.fileName,
+        status: 'done',
+        url: item.fileUrl,
+      });
+    });
+    delete newProps.value;
+    newProps.defaultFileList = defaultFileList;
+  }
   switch (baseControlType) {
     // 单行文本
     case 'text':
