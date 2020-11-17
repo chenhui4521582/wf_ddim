@@ -41,7 +41,10 @@ export const FormContent = (props: any, ref: any) => {
     case 'vacationTime':
     case 'outCheckTime':
       return (
-        <InputItem {...newProps} style={{ textAlign: 'right' }}>
+        <InputItem
+          {...newProps}
+          style={{ textAlign: 'right', whiteSpace: 'normal' }}
+        >
           {name}
           {isRequired === 1 && <span style={{ color: 'red' }}>*</span>}
         </InputItem>

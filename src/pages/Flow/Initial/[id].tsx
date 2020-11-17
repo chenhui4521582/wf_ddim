@@ -155,11 +155,24 @@ export default (props: any) => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     let formData: any[] = [];
+    let filesData: Boolean = false;
     Object.keys(values).map(item => {
-      let formDataItem = toFormData(item, values[item], 'id', unitList);
+      let formDataItem:any = toFormData(item, values[item], 'id', unitList);
+      /** 文件控件需要特殊字段传递，这里把文件控件的值制空**/
+      if(formDataItem.type === 'files') {
+        filesData = formDataItem?.value;
+        formData.push({
+          "id": formDataItem.id,
+          "multipleNumber": 1,
+          "showValue": "",
+          "value": ""
+        });
+        return
+      }
       formDataItem && formData.push(formDataItem);
     });
     let idArray: number[] = [];
+    console.log(formData)
     formData.map(item => {
       let count = countInArray(idArray, item.id);
       if (count > 0) {
@@ -167,10 +180,11 @@ export default (props: any) => {
       }
       idArray.push(item.id);
     })
+
     let res: GlobalResParams<string> = await saveFlow({
       resFormId: id,
       wfResFormSaveItemCrudParamList: formData,
-      wfTaskFormFilesCrudParamList: []
+      wfTaskFormFilesCrudParamList: filesData
     });
     setLoading(false);
     if (res.status === 200) {
@@ -260,9 +274,11 @@ export default (props: any) => {
       case 'vacationEndTime':
       case 'overTimeEnd':
       case 'outCheckEndTime':
+        let endTime = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
         if(!_currentControl.startTime 
           ||
-          new Date(_currentControl.startTime).getTime() >= new Date(currentControlValue).getTime()) {
+          new Date(_currentControl.startTime).getTime() >= new Date(endTime).getTime()
+        ) {
           Toast.fail('开始时间需小于结束时间', 2);
           const key = Object.keys(changedValues)[0];
           allValues[key] = null
@@ -270,7 +286,7 @@ export default (props: any) => {
           return
         } 
         _currentControl.lock = false
-        _currentControl.endTime = moment(currentControlValue).format('YYYY-MM-DD HH:mm:ss');
+        _currentControl.endTime = endTime;
         break;
       case 'vacationType':
         _currentControl.typeId = currentControlValue[0]?.split('---')[0] || 1;

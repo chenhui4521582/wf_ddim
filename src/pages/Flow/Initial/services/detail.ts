@@ -43,7 +43,7 @@ export interface IFormData {
 interface ISaveFlow {
   resFormId: string | number;
   wfResFormSaveItemCrudParamList: IFormData[];
-  wfTaskFormFilesCrudParamList: [];
+  wfTaskFormFilesCrudParamList: any;
 }
 
 export async function saveFlow(data: ISaveFlow) {

@@ -103,7 +103,6 @@ export const toFormData = (
   idName: string,
   unitList?: IUnitList[],
 ) => {
-  console.log(dataKey, dataValue);
   let id = dataKey.split('-$-')[0];
   let baseControlType = dataKey.split('-$-')[1];
   let defaultValue = dataKey.split('-$-')[2];
@@ -159,14 +158,23 @@ export const toFormData = (
       case 'files':
         if (dataValue) {
           let { fileList } = dataValue;
-          let filesUrl: any[] = [];
+          let files: any[] = [];
           fileList?.map((item: any) => {
-            filesUrl.push(item?.response?.obj?.url);
+            let fileExtname = item.name.split('.').pop();
+            files.push({
+              resFormControlId: id,
+              fileUrl: item?.response?.obj?.url,
+              fileName: item.name,
+              fileSize: item.size,
+              fileExtname: fileExtname,
+              multipleNumber: 1,
+            });
           });
           return {
             [idName]: id,
+            type: 'files',
             multipleNumber,
-            value: filesUrl.length > 0 ? filesUrl.join(',') : '',
+            value: files,
             showValue: '',
           };
         } else
