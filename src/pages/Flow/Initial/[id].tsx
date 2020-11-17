@@ -155,7 +155,7 @@ export default (props: any) => {
   const handleSubmit = async (values: any) => {
     setLoading(true);
     let formData: any[] = [];
-    let filesData: Boolean = false;
+    let filesData: any[] = [];
     Object.keys(values).map(item => {
       let formDataItem:any = toFormData(item, values[item], 'id', unitList);
       /** 文件控件需要特殊字段传递，这里把文件控件的值制空**/
@@ -172,7 +172,6 @@ export default (props: any) => {
       formDataItem && formData.push(formDataItem);
     });
     let idArray: number[] = [];
-    console.log(formData)
     formData.map(item => {
       let count = countInArray(idArray, item.id);
       if (count > 0) {

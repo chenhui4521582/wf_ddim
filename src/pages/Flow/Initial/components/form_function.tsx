@@ -160,13 +160,12 @@ export const toFormData = (
           let { fileList } = dataValue;
           let files: any[] = [];
           fileList?.map((item: any) => {
-            let fileExtname = item.name.split('.').pop();
             files.push({
               resFormControlId: id,
               fileUrl: item?.response?.obj?.url,
               fileName: item.name,
               fileSize: item.size,
-              fileExtname: fileExtname,
+              fileExtname: item.type,
               multipleNumber: 1,
             });
           });
