@@ -29,6 +29,7 @@ import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toFormData } from './components/form_function';
 import { Form } from 'antd';
 import moment from 'moment';
+import { appCall } from '@/utils/bridge.js';
 
 const validateMessages = {
   required: "'${name}' 是必填字段",
@@ -189,6 +190,8 @@ export default (props: any) => {
     if (res.status === 200) {
       history.goBack();
       Toast.success(res.msg, 2);
+      appCall.callIOSHandler('ddimFinishCallBack', {}, function(response: any) {
+      });
     }
   }
 

@@ -26,6 +26,7 @@ import styles from './detail.less';
 import StepFlow from '@/pages/Flow/components/StepFlow';
 import { toShow, toFormData } from '../Initial/components/form_function';
 import moment from 'moment';
+import { appCall } from '@/utils/bridge.js'
 const Item = List.Item;
 const Brief = Item.Brief;
 const validateMessages = {
@@ -161,6 +162,8 @@ export default (props: any) => {
     if (res.status === 200) {
       setRefresh(!refresh);
       Toast.success(res.msg, 2);
+      appCall.callIOSHandler('ddimFinishCallBack', {}, function(response: any) {
+      });
     }
   }
 
