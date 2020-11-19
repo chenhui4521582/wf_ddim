@@ -20,7 +20,7 @@ export const toShow = (data: any) => {
     case 'multiple':
     case 'remainCardNumber':
       return data.value;
-    case 'outcheckTime':
+    case 'outCheckTime':
     case 'vacationTime':
     case 'totalVacationTime':
     case 'totalReVacationTime':

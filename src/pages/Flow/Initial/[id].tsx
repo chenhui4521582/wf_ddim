@@ -113,20 +113,23 @@ export default (props: any) => {
   }
 
   const handleAdd = (childList: any) => {
-    const newList = {...childList};
-    detail?.formChildlist.map(item => {
-      if(item.id === newList.id) item.canAdd = false;
+    let newList = {...childList};
+    let newformChildlist: any[] = [...detail?.formChildlist as any]
+    let newListIndex: any = 0
+    detail?.formChildlist.map((item, index: Number) => {
+      if(item.id === newList.id) {
+        item.canAdd = false;
+        newListIndex = index;
+      }
     })
     newList.canRemove = true;
     newList.canAdd = true;
     newList.sort = newList.sort + 10000;
+    newformChildlist.splice(newListIndex + 1, 0, newList)
     let data;
     detail && (data = {
       ...detail,
-      formChildlist: [
-        ...detail?.formChildlist,
-        newList
-      ]
+      formChildlist: [...newformChildlist]
     })
     setDetail(data as any);
   }
