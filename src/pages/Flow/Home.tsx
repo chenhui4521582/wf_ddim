@@ -6,7 +6,6 @@ import DealingFlow from './Dealing/components/dealing_flow';
 import DealedFlow from './Dealed/components/dealed_flow';
 import styles from './home.less';
 import { useModel } from 'umi';
-
 export default (props: any) => {
   const { setBarName } = useModel('useBarName');
   const { selectedTab, setSelectedTab } = useModel('useSelectedTab');
@@ -21,7 +20,7 @@ export default (props: any) => {
     if (selectedTab === 'myflow') setBarName('我的流程');
     if (selectedTab === 'dealing') setBarName('待办事宜');
     if (selectedTab === 'dealed') setBarName('已办事宜');
-  }, [selectedTab])
+  }, [selectedTab]);
   return (
     <div>
       {renderContent()}
@@ -41,8 +40,7 @@ export default (props: any) => {
             onPress={() => {
               setSelectedTab('initial');
             }}
-          >
-          </TabBar.Item>
+          ></TabBar.Item>
           <TabBar.Item
             icon={<div className={styles.myPic} />}
             selectedIcon={<div className={styles.myPicSelected} />}
@@ -52,8 +50,7 @@ export default (props: any) => {
             onPress={() => {
               setSelectedTab('myflow');
             }}
-          >
-          </TabBar.Item>
+          ></TabBar.Item>
           <TabBar.Item
             icon={<div className={styles.dealing} />}
             selectedIcon={<div className={styles.dealingSelected} />}
@@ -63,8 +60,7 @@ export default (props: any) => {
             onPress={() => {
               setSelectedTab('dealing');
             }}
-          >
-          </TabBar.Item>
+          ></TabBar.Item>
           <TabBar.Item
             icon={<div className={styles.dealed} />}
             selectedIcon={<div className={styles.dealedSelected} />}
@@ -74,10 +70,9 @@ export default (props: any) => {
             onPress={() => {
               setSelectedTab('dealed');
             }}
-          >
-          </TabBar.Item>
+          ></TabBar.Item>
         </TabBar>
       </div>
     </div>
-  )
-}
+  );
+};
