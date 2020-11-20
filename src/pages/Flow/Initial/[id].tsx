@@ -51,7 +51,7 @@ export default (props: any) => {
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
   const [unitList, steUnitList] = useState<IUnitList[]>();
   const [controlList, setControlList] = useState<any[]>([]);
-  const [sort, setSort] = useState<Number>(0);
+  const [sort, setSort] = useState<number>(0);
   let _currentControl = {} as ICurrentControl;
   useEffect(() => {
     async function getDetail() {
@@ -114,7 +114,7 @@ export default (props: any) => {
 
   const handleAdd = (childList: any) => {
     let newList: any = {...childList};
-    setSort(Number(sort) + 10000 + newList.sort)
+
     let newformChildlist: any[] = [...detail?.formChildlist as any]
     let newListIndex: any = 0
     detail?.formChildlist.map((item, index: Number) => {
@@ -125,13 +125,14 @@ export default (props: any) => {
     })
     newList.canRemove = true;
     newList.canAdd = true;
-    newList.sort = sort;
+    newList.sort = Number(sort) + 10000 + newList.sort;
     newformChildlist.splice(newListIndex + 1, 0, newList)
     let data;
     detail && (data = {
       ...detail,
       formChildlist: [...newformChildlist]
     })
+    setSort(Number(sort) +1)
     setDetail(data as any);
   }
 
@@ -390,7 +391,7 @@ export default (props: any) => {
                                     initialValue={formList.defaultShowValue || formList.defaultValue}
                                     rules={[{required: formList.isRequired === 1}]}
                                   >
-                                    <FormBase data={formList} setFieldsValue={form.setFieldsValue}></FormBase>
+                                    <FormBase data={formList}></FormBase>
                                   </Form.Item>
                                 </div>
                               )

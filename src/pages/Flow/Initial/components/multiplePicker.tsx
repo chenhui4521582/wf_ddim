@@ -38,7 +38,8 @@ export default (props: ISelectParams) => {
     setShowValue(value.join(','));
     let params: any = {};
     params[newProps.formnameid] = value.join(',');
-    newProps.setFieldsValue(params);
+    newProps?.onChange && newProps.onChange(value.join(','));
+    // newProps.setFieldsValue(params);
     setVisible(false);
   };
 
