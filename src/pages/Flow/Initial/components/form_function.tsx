@@ -54,7 +54,7 @@ export const toShow = (data: any) => {
     case 'overTimeEnd':
     case 'outCheckStartTime':
     case 'outCheckEndTime':
-      return new Date(data.value);
+      return new Date(Date.parse(data.value?.replace(/-/g, '/')));
     case 'select':
       return [data.value];
 

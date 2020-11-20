@@ -61,7 +61,7 @@ export default (props: any) => {
       if (json1.status === 200) {
         steUnitList(json1?.obj);
       }
-      res?.obj.formChildlist.map(item => {
+      res?.obj?.formChildlist.map(item => {
         if (item.type === 1) {
           item.canAdd = true
         }
