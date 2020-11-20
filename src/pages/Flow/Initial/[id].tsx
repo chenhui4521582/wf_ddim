@@ -39,7 +39,6 @@ interface IUnitList {
   code: number;
   desc: string;
 }
-
 export default (props: any) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -52,6 +51,7 @@ export default (props: any) => {
   const [flowSteps, setFlowSteps] = useState<IFlowStep[]>([]);
   const [unitList, steUnitList] = useState<IUnitList[]>();
   const [controlList, setControlList] = useState<any[]>([]);
+  const [sort, setSort] = useState<Number>(0);
   let _currentControl = {} as ICurrentControl;
   useEffect(() => {
     async function getDetail() {
@@ -113,7 +113,8 @@ export default (props: any) => {
   }
 
   const handleAdd = (childList: any) => {
-    let newList = {...childList};
+    let newList: any = {...childList};
+    setSort(Number(sort) + 10000 + newList.sort)
     let newformChildlist: any[] = [...detail?.formChildlist as any]
     let newListIndex: any = 0
     detail?.formChildlist.map((item, index: Number) => {
@@ -124,7 +125,7 @@ export default (props: any) => {
     })
     newList.canRemove = true;
     newList.canAdd = true;
-    newList.sort = newList.sort + 10000;
+    newList.sort = sort;
     newformChildlist.splice(newListIndex + 1, 0, newList)
     let data;
     detail && (data = {
@@ -135,10 +136,13 @@ export default (props: any) => {
   }
 
   const handleRemove = (childList: any) => {
-    const newList: any = detail?.formChildlist.filter(item => item.sort !== childList.sort);
-    const addList = newList.filter((item: any) => (item.canAdd === true && item.id === childList.id));
-    addList.length === 0 && newList.map((item: any) => {
-      if (item.id === childList.id && item.sort === childList.sort - 10000) {
+    /** 筛选出非当前控件的其他的控件 **/
+    const otherList: any = detail?.formChildlist.filter((item: any) => (item.sort !== childList.sort));
+    /** 筛选出所有的相同控件 **/
+    const identicalList: any = otherList.filter((item: any) => item.id === childList.id);
+    /** 筛选出所有的相同控件并且在最后一个控件上增加（添加按钮） **/
+    identicalList.map((item: any, index: Number) => {
+      if(identicalList.length == (Number(index)+1)) {
         item.canAdd = true;
       }
     })
@@ -146,7 +150,7 @@ export default (props: any) => {
     detail && (data = {
       ...detail,
       formChildlist: [
-        ...newList,
+        ...otherList
       ]
     })
     setDetail(data as any);
